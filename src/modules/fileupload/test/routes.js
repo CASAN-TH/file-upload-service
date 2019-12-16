@@ -16,7 +16,7 @@ describe('Fileupload CRUD routes tests', function () {
 
     before(function (done) {
         mockup = {
-            name: 'name'
+            name: 'name '
         };
         credentials = {
             username: 'username',
