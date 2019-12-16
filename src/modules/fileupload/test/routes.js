@@ -32,18 +32,20 @@ describe('Fileupload CRUD routes tests', function () {
         done();
     });
 
-    it('should be Fileupload get use token', (done)=>{
+    const filePath = 'src/modules/fileupload/images/test.jpg'
+
+    it('should be Fileupload get use token', (done) => {
         request(app)
-        .get('/api/fileuploads')
-        .set('Authorization', 'Bearer ' + token)
-        .expect(200)
-        .end((err, res)=>{
-            if (err) {
-                return done(err);
-            }
-            var resp = res.body;
-            done();
-        });
+            .get('/api/fileuploads')
+            .set('Authorization', 'Bearer ' + token)
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                var resp = res.body;
+                done();
+            });
     });
 
     it('should be Fileupload get by id', function (done) {
@@ -75,7 +77,7 @@ describe('Fileupload CRUD routes tests', function () {
 
     });
 
-    it('should be Fileupload post use token', (done)=>{
+    it('should be Fileupload post use token', (done) => {
         request(app)
             .post('/api/fileuploads')
             .set('Authorization', 'Bearer ' + token)
@@ -144,15 +146,15 @@ describe('Fileupload CRUD routes tests', function () {
 
     });
 
-    it('should be fileupload get not use token', (done)=>{
+    it('should be fileupload get not use token', (done) => {
         request(app)
-        .get('/api/fileuploads')
-        .expect(403)
-        .expect({
-            status: 403,
-            message: 'User is not authorized'
-        })
-        .end(done);
+            .get('/api/fileuploads')
+            .expect(403)
+            .expect({
+                status: 403,
+                message: 'User is not authorized'
+            })
+            .end(done);
     });
 
     it('should be fileupload post not use token', function (done) {
@@ -219,6 +221,26 @@ describe('Fileupload CRUD routes tests', function () {
                     .end(done);
             });
 
+    });
+
+    it('Should Be get Data URL', function (done) {
+        request(app)
+            .post('/api/imageupload')
+            .set('Authorization', 'Bearer ' + token)
+            .attach('filename', filePath)
+            .expect(200)
+            .end(function (err, res) {
+                if (err) {
+                    return done(err);
+                }
+                var resp = res.body;
+                console.log(resp)
+                assert.equal(resp.data.original_filename, 'test')
+                assert.equal(resp.data.resource_type, 'image')
+                assert.equal(resp.data.format, 'jpg')
+
+                done();
+            });
     });
 
     afterEach(function (done) {

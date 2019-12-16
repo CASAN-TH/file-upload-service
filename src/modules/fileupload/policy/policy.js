@@ -11,7 +11,7 @@ acl = new acl(new acl.memoryBackend());
 /**
  * Invoke Admin Permissions
  */
-exports.invokeRolesPolicies = function() {
+exports.invokeRolesPolicies = function () {
   acl.allow([
     {
       roles: ["admin", "user"],
@@ -23,6 +23,10 @@ exports.invokeRolesPolicies = function() {
         {
           resources: "/api/fileuploads/:fileuploadId",
           permissions: "*"
+        }, 
+        {
+          resources: "/api/imageupload",
+          permissions: "*"
         }
       ]
     }
@@ -32,7 +36,7 @@ exports.invokeRolesPolicies = function() {
 /**
  * Check If Admin Policy Allows
  */
-exports.isAllowed = function(req, res, next) {
+exports.isAllowed = function (req, res, next) {
   var roles = req.user ? req.user.roles : ["guest"];
 
   // Check for user roles
@@ -40,7 +44,7 @@ exports.isAllowed = function(req, res, next) {
     roles,
     req.route.path,
     req.method.toLowerCase(),
-    function(err, isAllowed) {
+    function (err, isAllowed) {
       if (err) {
         // An authorization error occurred.
         return res.status(500).json({

@@ -14,7 +14,7 @@ module.exports = function (app) {
         .put(controller.update)
         .delete(controller.delete);
 
-    app.route('/api/imageupload')
+    app.route('/api/imageupload').all(policy.isAllowed)
         .post(controller.imageUpload)
 
     app.param('fileuploadId', controller.getByID);
