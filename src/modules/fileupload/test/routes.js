@@ -238,7 +238,8 @@ describe('Fileupload CRUD routes tests', function () {
                 assert.equal(resp.data.original_filename, 'test')
                 assert.equal(resp.data.resource_type, 'image')
                 assert.equal(resp.data.format, 'jpg')
-
+                assert.notEqual(resp.data.url, '')
+                assert.notEqual(resp.data.secure_url, '')
                 done();
             });
     });
