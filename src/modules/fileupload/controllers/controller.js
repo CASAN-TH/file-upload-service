@@ -6,6 +6,15 @@ var mongoose = require('mongoose'),
     errorHandler = require('../../core/controllers/errors.server.controller'),
     _ = require('lodash');
 
+var cloudinary = require("../../../config/cloudinary").cloudinary;
+
+var multer = require('multer')
+var storage = multer.diskStorage({
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+
 exports.getList = function (req, res) {
     var pageNo = parseInt(req.query.pageNo);
     var size = parseInt(req.query.size);
@@ -16,23 +25,23 @@ exports.getList = function (req, res) {
     }
     query.skip = size * (pageNo - 1);
     query.limit = size;
-        Fileupload.find({}, {}, query, function (err, datas) {
-            if (err) {
-                return res.status(400).send({
-                    status: 400,
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                res.jsonp({
-                    status: 200,
-                    data: datas
-                });
-            };
-        });
+    Fileupload.find({}, {}, query, function (err, datas) {
+        if (err) {
+            return res.status(400).send({
+                status: 400,
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp({
+                status: 200,
+                data: datas
+            });
+        };
+    });
 };
 
 exports.create = function (req, res) {
-    var newFileupload = new Fileupload (req.body);
+    var newFileupload = new Fileupload(req.body);
     newFileupload.createby = req.user;
     newFileupload.save(function (err, data) {
         if (err) {
@@ -116,3 +125,20 @@ exports.delete = function (req, res) {
         };
     });
 };
+
+exports.imageUpload = function (req, res) {
+    const upload = multer({ storage }).single('filename');
+    upload(req, res, function (err) {
+        if (err) {
+            return res.send(err)
+        }
+        const path = req.file.path
+        cloudinary.uploader.upload(path, (result) => {
+            // console.log(result);
+            res.json({
+                status: 200,
+                data: result
+            });
+        });
+    })
+}
